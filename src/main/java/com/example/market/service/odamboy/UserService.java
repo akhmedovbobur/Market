@@ -1,9 +1,9 @@
-package com.example.market.service;
+package com.example.market.service.odamboy;
 
-import com.example.market.dto.UserDto;
+import com.example.market.dto.odamboy.UserDto;
 import com.example.market.exception.UserException;
-import com.example.market.model.User;
-import com.example.market.repository.UserRepository;
+import com.example.market.model.odamboy.User;
+import com.example.market.repository.odamboy.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

@@ -1,6 +1,6 @@
-package com.example.market.repository;
+package com.example.market.repository.odamboy;
 
-import com.example.market.model.UserType;
+import com.example.market.model.odamboy.UserType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

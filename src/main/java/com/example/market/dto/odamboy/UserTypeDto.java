@@ -1,4 +1,4 @@
-package com.example.market.dto;
+package com.example.market.dto.odamboy;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;

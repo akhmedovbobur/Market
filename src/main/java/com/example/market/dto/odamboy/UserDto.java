@@ -1,11 +1,10 @@
-package com.example.market.dto;
+package com.example.market.dto.odamboy;
 
 
-import com.example.market.model.UserType;
+import com.example.market.model.odamboy.UserType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.lang.NonNull;
 
 
 import javax.validation.constraints.NotBlank;

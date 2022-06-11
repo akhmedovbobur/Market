@@ -1,9 +1,9 @@
-package com.example.market.service;
+package com.example.market.service.odamboy;
 
-import com.example.market.dto.UserTypeDto;
+import com.example.market.dto.odamboy.UserTypeDto;
 import com.example.market.exception.UserException;
-import com.example.market.model.UserType;
-import com.example.market.repository.UserTypeRepository;
+import com.example.market.model.odamboy.UserType;
+import com.example.market.repository.odamboy.UserTypeRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

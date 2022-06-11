@@ -1,4 +1,4 @@
-package com.example.market.model;
+package com.example.market.model.odamboy;
 
 import lombok.Getter;
 import lombok.Setter;

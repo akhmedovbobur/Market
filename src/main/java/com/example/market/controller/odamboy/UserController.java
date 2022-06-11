@@ -1,7 +1,7 @@
-package com.example.market.controller;
+package com.example.market.controller.odamboy;
 
-import com.example.market.dto.UserDto;
-import com.example.market.service.UserService;
+import com.example.market.dto.odamboy.UserDto;
+import com.example.market.service.odamboy.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
