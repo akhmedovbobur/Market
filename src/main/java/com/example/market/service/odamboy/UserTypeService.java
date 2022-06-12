@@ -1,7 +1,7 @@
 package com.example.market.service.odamboy;
 
 import com.example.market.dto.odamboy.UserTypeDto;
-import com.example.market.exception.UserException;
+import com.example.market.exception.MarketException;
 import com.example.market.model.odamboy.UserType;
 import com.example.market.repository.odamboy.UserTypeRepository;
 import lombok.AllArgsConstructor;
@@ -54,7 +54,7 @@ public class UserTypeService {
     public UserType getEntity(Integer id){
         Optional<UserType>optional=userTypeRepository.findByIdAndDeletedAtIsNull(id);
         if (optional.isEmpty()){
-            throw new UserException("User type not found");
+            throw new MarketException("User type not found");
         }
         return optional.get();
     }

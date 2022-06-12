@@ -1,13 +1,13 @@
 package com.example.market.model.hasanboy;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = ("body_types"))
 public class BodyTypes {

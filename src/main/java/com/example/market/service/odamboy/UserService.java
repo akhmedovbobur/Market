@@ -1,7 +1,7 @@
 package com.example.market.service.odamboy;
 
 import com.example.market.dto.odamboy.UserDto;
-import com.example.market.exception.UserException;
+import com.example.market.exception.MarketException;
 import com.example.market.model.odamboy.User;
 import com.example.market.repository.odamboy.UserRepository;
 import lombok.AllArgsConstructor;
@@ -25,7 +25,7 @@ public class UserService {
     public boolean create(UserDto dto){
         Optional<User>optional=userRepository.findByEmailOrContactAndDeletedAtIsNull(dto.getEmail(),dto.getPhone());
         if (optional.isPresent()){
-            throw new UserException("User already token");
+            throw new MarketException("User already token");
         }
         User user=new User();
         user.setId(dto.getId());
@@ -67,7 +67,7 @@ public class UserService {
     public User getEntity(Integer id){
         Optional<User>optional=userRepository.findByIdAndDeletedAtIsNull(id);
         if (optional.isEmpty()){
-            throw new UserException("User not found");
+            throw new MarketException("User not found");
         }
         return optional.get();
     }

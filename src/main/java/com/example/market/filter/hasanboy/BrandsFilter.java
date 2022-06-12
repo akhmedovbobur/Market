@@ -1,4 +1,4 @@
 package com.example.market.filter.hasanboy;
 
-public class BrandsDto {
+public class BrandsFilter {
 }

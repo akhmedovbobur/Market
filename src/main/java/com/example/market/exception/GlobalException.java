@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalException {
     @ExceptionHandler
-    public ResponseEntity<?> exception(UserException e){
+    public ResponseEntity<?> exception(MarketException e){
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 
