@@ -19,7 +19,7 @@ public class MerchantsDto {
     @NotBlank(message = ("The image_thumb cannot be empty or null"))
     private String imageThumb;
     @NotBlank(message = ("The is_featured cannot be empty or null"))
-    private String isFeatured;
+    private Boolean isFeatured;
     @NotBlank(message = ("The phone cannot be empty or null"))
     private String phone;
     @NotBlank(message = ("The mobile cannot be empty or null"))
