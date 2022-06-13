@@ -1,7 +1,6 @@
 package com.example.market.dto.azamat;
 
 import com.example.market.model.azamat.Vehicles;
-import com.example.market.model.azamat.VehiclesImages;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
