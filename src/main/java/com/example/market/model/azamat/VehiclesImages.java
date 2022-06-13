@@ -21,4 +21,11 @@ public class VehiclesImages {
 
     @Column(name = ("image_id"))
     private Integer imageId;
+
+    private String url;
+    private Integer position;
+
+    @Column(name = ("is_default"))
+    private Boolean isDefault;
+    private Boolean status;
 }
