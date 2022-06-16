@@ -4,12 +4,18 @@ import com.example.market.model.odamboy.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecificationExecutor<User> {
-    Optional<User> findByIdAndDeletedAtIsNull(Integer id);
-    Optional<User> findByEmailAndDeletedAtIsNull(String username);
-    Optional<User> findByEmailOrContactAndDeletedAtIsNull(String email, String contact);
-    Optional<User> findByEmailAndPasswordAndDeletedAtIsNull(String email, String password);
+    Optional<User> findByUsernameOrEmail(String username, String email);
+
+    Optional<User> findByEmail(String email);
+
+    Optional<User> findByUsernameAndPassword(String email, String password);
+
+    Optional<User> findByUsername(String username);
+
+    List<User> findAllByDeletedAtIsNull();
 }
 

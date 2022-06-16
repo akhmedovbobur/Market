@@ -2,51 +2,91 @@ package com.example.market.controller.odamboy;
 
 import com.example.market.dto.odamboy.UserDto;
 import com.example.market.service.odamboy.UserService;
-import lombok.AllArgsConstructor;
+import com.example.market.util.Response;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/user")
-@AllArgsConstructor
+@RequestMapping("/api/user")
 public class UserController {
+    @Autowired
     private UserService userService;
 
-    @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestBody @Valid UserDto userDto){
-        boolean result = userService.create(userDto);
-        return ResponseEntity.ok(result);
+    @GetMapping("/{id}")
+    public HttpEntity<?> get(@PathVariable("id") Integer id) {
+        UserDto result = userService.get(id);
+        return ResponseEntity.ok().body(
+              Response.builder()
+                        .timeStep(LocalDateTime.now())
+                        .data(Map.of("user", result))
+                        .message("User retrieved")
+                        .status(HttpStatus.OK)
+                        .statusCode(HttpStatus.OK.value())
+                        .build()
+        );
     }
 
-    @GetMapping("/get/{id}")
-    public ResponseEntity<?>ger(@PathVariable("id")Integer id){
-        UserDto result =userService.get(id);
-        return ResponseEntity.ok(result);
-    }
-    @PutMapping("/update/{id}")
-    public ResponseEntity<?> update(@PathVariable("id") Integer id,
-                                    @RequestBody @Valid UserDto userDto){
-        boolean result = userService.update(id, userDto);
-        return ResponseEntity.ok(result);
-    }
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> delete(@PathVariable("id") Integer id){
-        boolean result = userService.delete(id);
-        return ResponseEntity.ok(result);
-    }
-    @GetMapping("/admin/list")
-    public ResponseEntity<?> getAllForAdmin(@RequestParam("s") Integer size,
-                                            @RequestParam("p") Integer page){
-        List<UserDto> result = userService.getAllForAdmin(size,page);
-        return ResponseEntity.ok(result);
+    @PostMapping()
+    public HttpEntity<?> create(@RequestBody UserDto user) {
+        UserDto result = userService.create(user);
+        return ResponseEntity.ok().body(
+             Response.builder()
+                        .timeStep(LocalDateTime.now())
+                        .data(Map.of("user", result))
+                        .message("User creaetd")
+                        .status(HttpStatus.OK)
+                        .statusCode(HttpStatus.OK.value())
+                        .build()
+        );
     }
 
-    @PatchMapping("/create-admin/{id}")
-    public ResponseEntity<?> changeUserToAdmin(@PathVariable("id") Integer id){
-        boolean result = userService.changeUserToAdmin(id);
-        return ResponseEntity.ok(result);
+    @PutMapping("/{id}")
+    public HttpEntity<?> update(@PathVariable("id") Integer id,
+                                @RequestBody UserDto userDto) {
+        UserDto result = userService.update(id, userDto);
+        return ResponseEntity.ok().body(
+                Response.builder()
+                        .timeStep(LocalDateTime.now())
+                        .data(Map.of("user", result))
+                        .message("User updated")
+                        .status(HttpStatus.OK)
+                        .statusCode(HttpStatus.OK.value())
+                        .build()
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    public HttpEntity<?> delete(@PathVariable("id") Integer id) {
+        Boolean result = userService.delete(id);
+        return ResponseEntity.ok().body(
+                Response.builder()
+                        .timeStep(LocalDateTime.now())
+                        .data(Map.of("user", result))
+                        .message("User deleted")
+                        .status(HttpStatus.OK)
+                        .statusCode(HttpStatus.OK.value())
+                        .build()
+        );
+    }
+
+    @GetMapping("/all")
+    public HttpEntity<?> getAll(){
+        List<UserDto> userDtoList = userService.getAll();
+        return ResponseEntity.ok().body(
+                Response.builder()
+                        .timeStep(LocalDateTime.now())
+                        .data(Map.of("users", userDtoList))
+                        .message("User retrieved")
+                        .status(HttpStatus.OK)
+                        .statusCode(HttpStatus.OK.value())
+                        .build()
+        );
     }
 }
