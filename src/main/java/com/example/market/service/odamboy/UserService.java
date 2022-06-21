@@ -1,117 +1,141 @@
 package com.example.market.service.odamboy;
 
 import com.example.market.dto.odamboy.UserDto;
+import com.example.market.dto.odamboy.UserTypeDto;
 import com.example.market.exception.MarketException;
 import com.example.market.model.odamboy.User;
 import com.example.market.repository.odamboy.UserRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class UserService {
 
     private UserRepository userRepository;
     private UserTypeService userTypeService;
-
-    public boolean create(UserDto dto){
-        Optional<User>optional=userRepository.findByEmailOrContactAndDeletedAtIsNull(dto.getEmail(),dto.getPhone());
-        if (optional.isPresent()){
-            throw new MarketException("User already token");
-        }
-        User user=new User();
-        user.setId(dto.getId());
-        user.setCreatedAt(LocalDateTime.now());
-        user.setStatus(true);
-        userTypeService.get(user.getUserTypeId());
-        convertEntityToDto(user,dto);
-        userRepository.save(user);
-        return true;
-    }
-    public UserDto get(Integer id){
-        User user=getEntity(id);
-        UserDto userDto=new UserDto();
-        userTypeService.get(userDto.getUserTypeId());
-        user.setCreatedAt(LocalDateTime.now());
-        convertDtoToEntity(userDto,user);
-        userRepository.save(user);
+    public UserDto get(Integer id) {
+        User entity = getUserEntity(id);
+        UserDto userDto = new UserDto();
+        userDto = convertEntityToDto(entity, userDto);
+        userDto.setUserTypeDto(userTypeService.get(userDto.getUserTYpeId()));
+        log.info("Get User Info {}", userDto);
         return userDto;
     }
 
-    public boolean update(Integer id, UserDto dto){
-        User update=getEntity(id);
-        update.setId(dto.getId());
-        update.setUpdatedAt(LocalDateTime.now());
-        userTypeService.getEntity(dto.getUserTypeId());
-        convertEntityToDto(update, dto);
-        userRepository.save(update);
-        return true;
+    public UserDto create(UserDto userDto) {
+        //checking email and username
+        Optional<User> optional = userRepository.findByUsernameOrEmail(userDto.getUsername(), userDto.getEmail());
+        if (optional.isPresent()) {
+            throw new MarketException(" User with this email or username already exist ! ");
+        }
+        User user = new User();
+        // Check
+        userTypeService.getUserTypeEntity(userDto.getUserTYpeId());
+        user = convertDtoToEntity(userDto, user);
+        // Because this data is unique
+        user.setUsername(userDto.getUsername());
+        user.setEmail(userDto.getEmail());
+        user.setPhone(userDto.getPhone());
+        user.setCreatedAt(LocalDateTime.now());
+        userRepository.save(user);
+        log.info("Create User {}", user);
+        return userDto;
     }
 
-    public  boolean delete(Integer id){
-        User user=getEntity(id);
+    public UserDto update(Integer id, UserDto userDto) {
+        User user = getUserEntity(id);
+        convertDtoToEntity(userDto, user);
+        user.setId(id);
+        // Because this data is unique
+        user.setUsername(userDto.getUsername());
+        user.setEmail(userDto.getEmail());
+        user.setPhone(userDto.getPhone());
+        user.setUpdatedAt(LocalDateTime.now());
+        userRepository.save(user);
+        log.info("Update User {}", user);
+        return userDto;
+    }
+
+    public Boolean delete(Integer id) {
+        User user = getUserEntity(id);
         user.setDeletedAt(LocalDateTime.now());
         userRepository.save(user);
+        log.info("Delete User {}", user);
         return true;
     }
 
+    public List<UserDto> getAll(){
+        List<User> userList = userRepository.findAllByDeletedAtIsNull();
+        List<UserDto> userDtoList = new ArrayList<>();
+        for (User user : userList) {
+            UserDto userDto = convertEntityToDto(user, new UserDto());
+            userDto.setUserTypeDto(userTypeService.convertEntityToDto(userTypeService.getUserTypeEntity(
+                    user.getUserTypeId()), new UserTypeDto()));
+            userDtoList.add(userDto);
+        }
+        return userDtoList;
+    }
 
-    public User getEntity(Integer id){
-        Optional<User>optional=userRepository.findByIdAndDeletedAtIsNull(id);
-        if (optional.isEmpty()){
-            throw new MarketException("User not found");
+    //Secondary functions
+
+    public User getUserEntity(Integer id) {
+        Optional<User> optional = userRepository.findById(id);
+        if (optional.isEmpty() || optional.get().getDeletedAt() != null) {
+            throw new MarketException("User does not exist !");
         }
         return optional.get();
     }
-    public void convertDtoToEntity(UserDto dto, User user){
-        user.setUserTypeId(dto.getUserTypeId());
-        user.setUserType(dto.getUserType());
-        user.setEmail(dto.getEmail());
-        user.setAddress(dto.getAddress());
-        user.setAddress2(dto.getAddress2());
-        user.setAvatar(dto.getAvatar());
-        user.setBirth(dto.getBirth());
-        user.setCityId(dto.getCityId());
-        user.setEmailVerifiedAt(dto.getEmailVerifiedAt());
-        user.setFirstName(dto.getFirstName());
-        user.setLastName(dto.getLastName());
-        user.setPassword(dto.getPassword());
-        user.setPhone(dto.getPhone());
-        user.setPhoneVerifiedAt(dto.getPhoneVerifiedAt());
-        user.setPostCode(dto.getPostCode());
-        user.setToken(dto.getToken());
-        user.setUserName(dto.getUserName());
-        user.setStatus(true);
+
+
+    public UserDto convertEntityToDto(User first, UserDto second) {
+        second.setId(first.getId());
+        second.setUserTYpeId(first.getUserTypeId());
+        second.setUsername(first.getUsername());
+        second.setPassword(first.getPassword());
+        second.setEmail(first.getEmail());
+        second.setFirstname(first.getFirstname());
+        second.setLastname(first.getLastname());
+        second.setAvatar(first.getAvatar());
+        second.setPhone(first.getPhone());
+        second.setBirth(first.getBirth());
+        second.setAddress(first.getAddress());
+        second.setAddress2(first.getAddress2());
+        second.setCityId(first.getCityId());
+        second.setPostcode(first.getPostcode());
+        second.setQrCode(first.getQrCode());
+        second.setEmailVerifiedAt(first.getEmailVerifiedAt());
+        second.setPhoneVerifiedAt(first.getPhoneVerifiedAt());
+        second.setCreatedAt(first.getCreatedAt());
+        second.setUpdatedAt(first.getUpdatedAt());
+        second.setDeletedAt(first.getDeletedAt());
+        second.setStatus(first.getStatus());
+        return second;
     }
 
-    public UserDto convertEntityToDto(User user, UserDto dto){
-        dto.setUserTypeId(user.getUserTypeId());
-        dto.setUserType(user.getUserType());
-        dto.setEmail(user.getEmail());
-        dto.setAddress(user.getAddress());
-        dto.setAddress2(user.getAddress2());
-        dto.setAvatar(user.getAvatar());
-        dto.setBirth(user.getBirth());
-        dto.setCityId(user.getCityId());
-        dto.setEmailVerifiedAt(user.getEmailVerifiedAt());
-        dto.setFirstName(user.getFirstName());
-        dto.setLastName(user.getLastName());
-        dto.setPassword(user.getPassword());
-        dto.setPhone(user.getPhone());
-        dto.setPhoneVerifiedAt(user.getPhoneVerifiedAt());
-        dto.setPostCode(user.getPostCode());
-        dto.setToken(user.getToken());
-        dto.setUserName(user.getUserName());
-        dto.setStatus(true);
-        return dto;
+    public User convertDtoToEntity(UserDto first, User second) {
+        second.setUserTypeId(first.getUserTYpeId());
+        second.setFirstname(first.getFirstname());
+        second.setLastname(first.getLastname());
+        second.setAvatar(first.getAvatar());
+        second.setBirth(first.getBirth());
+        second.setAddress(first.getAddress());
+        second.setAddress2(first.getAddress2());
+        second.setCityId(first.getCityId());
+        second.setPostcode(first.getPostcode());
+        second.setQrCode(first.getQrCode());
+        return second;
     }
 
     public List<UserDto> getAllForAdmin(Integer page, Integer size) {
@@ -120,7 +144,7 @@ public class UserService {
         return users.stream().map(user -> convertEntityToDto(user, new UserDto())).collect(Collectors.toList());
     }
     public boolean changeUserToAdmin(Integer id) {
-        User user = getEntity(id);
+        User user = getUserEntity(id);
         user.setUserTypeId(1);
         user.setUpdatedAt(LocalDateTime.now());
         userRepository.save(user);
